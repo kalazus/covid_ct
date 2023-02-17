@@ -79,6 +79,12 @@ if __name__ == "__main__":
 
         return images
 
-    nii_dir_to_png("./data/covid19-ct-scans/ct_scans", "./data/pngs/ct_scans", scans_to_pngs)
-    for mask_dir in ['infection_mask', 'lung_mask', 'lung_and_infection_mask']:
-        nii_dir_to_png(os.path.join('./data/covid19-ct-scans', mask_dir), os.path.join('./data/pngs', mask_dir), masks_to_png)
+    nii_dir_to_png(
+        "./data/covid19-ct-scans/ct_scans", "./data/pngs/ct_scans", scans_to_pngs
+    )
+    for mask_dir in ["infection_mask", "lung_mask", "lung_and_infection_mask"]:
+        nii_dir_to_png(
+            os.path.join("./data/covid19-ct-scans", mask_dir),
+            os.path.join("./data/pngs", mask_dir),
+            masks_to_png,
+        )
