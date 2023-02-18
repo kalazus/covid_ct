@@ -132,5 +132,9 @@ dmypy.json
 # Mac
 *.DS_Store
 
-# Data
+# Data and models
 data/
+models/
+
+# Pytorch Lightning
+lightning_logs/
