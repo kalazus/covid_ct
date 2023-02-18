@@ -21,7 +21,10 @@ class SegmentationDataset(Dataset):
     """
 
     def __init__(
-        self, df: "pd.DataFrame", classes: List[int], transformation: "A.BasicTransform"
+        self,
+        df: "pd.DataFrame",
+        classes: List[int],
+        transformation: "A.BasicTransform" = None,
     ) -> None:
         super().__init__()
 
@@ -36,7 +39,7 @@ class SegmentationDataset(Dataset):
 
     def read_image(self, file: str):
         image = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
-        image = np.expand_dims(image, 2)
+        image = np.expand_dims(image, 2).astype(np.float32)
         return image
 
     def read_mask(self, file: str):
@@ -53,4 +56,27 @@ class SegmentationDataset(Dataset):
             items = self.transformation(image=image, mask=mask)
             image, mask = items["image"], items["mask"]
 
+        image = np.moveaxis(image, 2, 0)
+        mask = np.moveaxis(mask, 2, 0)
+
         return image, mask
+
+
+if __name__ == "__main__":
+    from glob import glob
+
+    from torch.utils.data import DataLoader
+
+    images = glob("data/pngs/ct_scans/*.png")
+    masks = glob("data/pngs/lung_and_infection_mask/*.png")
+    df = pd.DataFrame(dict(image=images, mask=masks))
+
+    dataset = SegmentationDataset(df, [0, 1, 2])
+    item = dataset[0]
+    for el in item:
+        print(el.shape, el.dtype)
+
+    dl = DataLoader(dataset, 8, False)
+    item = next(iter(dl))
+    for el in item:
+        print(el.shape, el.dtype)
