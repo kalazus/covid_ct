@@ -133,7 +133,7 @@ dmypy.json
 *.DS_Store
 
 # Data and models
-data/
+input/
 models/
 
 # Pytorch Lightning
