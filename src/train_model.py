@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import torch
 import torchmetrics
 
-from config import Config
+from .config import Config
 
 
 class SegmentationModel(pl.LightningModule):
@@ -44,7 +44,7 @@ class SegmentationModel(pl.LightningModule):
         self.log("train_loss", loss)
 
         return loss
-    
+
     def _evaluation_step(self, batch, batch_idx, prefix):
         imgs, targets = batch
 
@@ -56,10 +56,10 @@ class SegmentationModel(pl.LightningModule):
         self.log(f"{prefix}loss", loss)
 
     def validation_step(self, batch, batch_idx):
-        self._evaluation_step(batch, batch_idx, 'val_')
+        self._evaluation_step(batch, batch_idx, "val_")
 
     def test_step(self, batch, batch_idx):
-        self._evaluation_step(batch, batch_idx, 'test_')
+        self._evaluation_step(batch, batch_idx, "test_")
 
     def predict_step(self, batch, batch_idx):
         imgs = batch[0]

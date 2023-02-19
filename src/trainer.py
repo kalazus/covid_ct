@@ -7,10 +7,10 @@ import pytorch_lightning as pl
 from sklearn.model_selection import GroupShuffleSplit
 from torch.utils.data import DataLoader
 
-from config import Config
-from dataset import SegmentationDataset
-from train_model import SegmentationModel
-from utils import seed_all, seed_worker
+from .config import Config
+from .dataset import SegmentationDataset
+from .train_model import SegmentationModel
+from .utils import seed_all, seed_worker
 
 
 def train(config: Config, data_root: Union[str, "os.PathLike"]):

@@ -5,7 +5,7 @@ from typing import Callable, List, Union
 import cv2
 import numpy as np
 
-from utils import nii_to_np
+from .utils import nii_to_np
 
 
 def nii_to_png(
