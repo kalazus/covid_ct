@@ -60,23 +60,3 @@ class SegmentationDataset(Dataset):
         mask = np.moveaxis(mask, 2, 0)
 
         return image, mask
-
-
-if __name__ == "__main__":
-    from glob import glob
-
-    from torch.utils.data import DataLoader
-
-    images = glob("data/pngs/ct_scans/*.png")
-    masks = glob("data/pngs/lung_and_infection_mask/*.png")
-    df = pd.DataFrame(dict(image=images, mask=masks))
-
-    dataset = SegmentationDataset(df, [0, 1, 2])
-    item = dataset[0]
-    for el in item:
-        print(el.shape, el.dtype)
-
-    dl = DataLoader(dataset, 8, False)
-    item = next(iter(dl))
-    for el in item:
-        print(el.shape, el.dtype)
