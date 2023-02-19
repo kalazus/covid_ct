@@ -88,10 +88,3 @@ def train(config: Config, data_root: Union[str, "os.PathLike"]):
     metrics = trainer.test(model, valid_dl, ckpt_path="best", verbose=False)[0]
 
     return metrics
-
-
-if __name__ == "__main__":
-    config = Config()
-    metrics = train(config, "data/pngs")
-    for metric, value in metrics.items():
-        print(metric, value)
