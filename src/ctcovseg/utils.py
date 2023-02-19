@@ -1,7 +1,8 @@
 import os
 import random
-from typing import Union
+from typing import List, Union
 
+import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
 import torch
@@ -44,3 +45,25 @@ def seed_worker(worker_id):
     r"""Seeds current worker"""
     seed = torch.utils.data.get_worker_info().seed % (2 ^ 32)
     seed_all(seed)
+
+
+def plot_segmentations(img: "np.ndarray", masks: List["np.ndarray"]):
+    r"""Plot image and countour of masks in a row
+
+    Parameters
+    ----------
+    img : ndarray
+        Main 2d image data.
+    masks : sequence of ndarray
+        Arrays with same shape as img.
+    """
+    full_len = len(masks) + 1
+    fig, axes = plt.subplots(1, full_len, figsize=(10, full_len * 10))
+    axes[0].imshow(img, cmap="bone")
+
+    for i, mask in enumerate(masks, 1):
+        axes[i].imshow(img, cmap="bone")
+        axes[i].contour(mask, alpha=0.5)
+
+    plt.tight_layout()
+    plt.show()
