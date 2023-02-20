@@ -1,7 +1,7 @@
 import albumentations as A
 import cv2
 import segmentation_models_pytorch as smp
-import torch.nn as nn
+from torch import nn
 
 
 class Config:

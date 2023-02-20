@@ -1,5 +1,4 @@
 import os
-from glob import glob
 from typing import Union
 
 import pytorch_lightning as pl
