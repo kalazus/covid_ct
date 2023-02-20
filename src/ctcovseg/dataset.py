@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 class SegmentationDataset(Dataset):
     r"""Basic dataset for segmentation task
 
-    Args
+    Parameters
     ----------
     df : pd.DataFrame
         Dataframe with 'image' and 'mask' columns
@@ -37,20 +37,22 @@ class SegmentationDataset(Dataset):
     def __len__(self):
         return len(self.masks)
 
-    def read_image(self, file: str):
+    def read_image(self, index: int):
+        file = self.images[index]
         image = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
         image = np.expand_dims(image, 2).astype(np.float32)
         return image
 
-    def read_mask(self, file: str):
+    def read_mask(self, index: int):
+        file = self.masks[index]
         mask = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
         class_masks = [mask == item for item in self.classes]
         mask = np.stack(class_masks, 2, dtype=np.float32)
         return mask
 
     def __getitem__(self, index):
-        image: np.ndarray = self.read_image(self.images[index])
-        mask: np.ndarray = self.read_mask(self.masks[index])
+        image: np.ndarray = self.read_image(index)
+        mask: np.ndarray = self.read_mask(index)
 
         if self.transformation is not None:
             items = self.transformation(image=image, mask=mask)
