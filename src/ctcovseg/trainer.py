@@ -2,15 +2,12 @@ import os
 from glob import glob
 from typing import Union
 
-import pandas as pd
 import pytorch_lightning as pl
-from sklearn.model_selection import GroupShuffleSplit
-from torch.utils.data import DataLoader
 
 from .config import Config
-from .dataset import SegmentationDataset
+from .datamodule import PngSegmentationDataModule
 from .train_model import SegmentationModel
-from .utils import seed_all, seed_worker
+from .utils import seed_all
 
 
 def train(config: Config, data_root: Union[str, "os.PathLike"]):
@@ -27,43 +24,14 @@ def train(config: Config, data_root: Union[str, "os.PathLike"]):
     metrics : dict
         Dictionary of metrics name and value.
     """
-    image_files = glob(os.path.join(data_root, "ct_scans", "*.png"))
-    mask_files = glob(os.path.join(data_root, "lung_and_infection_mask", "*.png"))
 
-    df = pd.DataFrame(dict(image=image_files, mask=mask_files))
-    df = df.iloc[:100].copy()
-
-    df["patient"] = df["image"].str.rsplit("_", n=1).str[0]
-
-    splitter = GroupShuffleSplit(
-        n_splits=1, train_size=config.train_size, random_state=config.seed
-    )
-    train_idx, valid_idx = next(splitter.split(df, groups=df["patient"]))
-
-    train_df = df.loc[train_idx]
-    valid_df = df.loc[valid_idx]
+    images_root = os.path.join(data_root, "ct_scans")
+    masks_root = os.path.join(data_root, "lung_and_infection_mask")
+    data_module = PngSegmentationDataModule(config, images_root, masks_root)
 
     seed_all(42)
-
-    train_ds = SegmentationDataset(
-        train_df, classes=config.classes, transformation=config.train_aug
-    )
-    valid_ds = SegmentationDataset(
-        valid_df, classes=config.classes, transformation=config.valid_aug
-    )
-
-    train_dl = DataLoader(
-        train_ds,
-        config.batch_size,
-        shuffle=True,
-        num_workers=4,
-        pin_memory=True,
-        worker_init_fn=seed_worker,
-    )
-    valid_dl = DataLoader(
-        valid_ds, config.batch_size, shuffle=False, num_workers=4, pin_memory=True
-    )
-
+    data_module.setup()
+    train_dl = data_module.train_dataloader()
     model = SegmentationModel(config, len(train_dl) * config.epochs)
 
     trainer_kwargs = dict(
@@ -83,8 +51,10 @@ def train(config: Config, data_root: Union[str, "os.PathLike"]):
     )
     trainer = pl.Trainer(**trainer_kwargs)
 
-    trainer.fit(model, train_dl, valid_dl)
+    trainer.fit(model, datamodule=data_module)
 
-    metrics = trainer.test(model, valid_dl, ckpt_path="best", verbose=False)[0]
+    metrics = trainer.test(
+        model, datamodule=data_module, ckpt_path="best", verbose=False
+    )[0]
 
     return metrics
