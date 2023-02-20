@@ -13,7 +13,7 @@ Run `python ./scripts/prepare_pngs.py` to preprocess dataset into 256*256 images
 # Train
 Run `python ./scripts/train.py` to start training with basic configuration. There are placeholder, that reduces size of dataset to 100 pngs and training goes for 1 epoch.
 
-Result of training can be viewed in `./notebooks/visualization.ipynb`
+Result of training can be viewed in `./notebooks/visualization.ipynb` (requires jupyter notebook, `pip install notebook ipywidgets`)
 
 # Example
 ![data predictions](pics/output_with_pred.png "CT slice, real mask and prediction")
