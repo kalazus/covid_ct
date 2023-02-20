@@ -6,7 +6,7 @@ Install this directory with `pip install -e .`.
 
 # Prepare Data
 Create folder `input` in this directory.
-Download https://www.kaggle.com/datasets/andrewmvd/covid19-ct-scans or similar dataset and unzip it into `input`.
+Download https://www.kaggle.com/datasets/andrewmvd/covid19-ct-scans or similar dataset and unzip it into `input` as `covid19-ct-scans` (so `input/covid19-ct-scans/metadata.csv` is relative path to medata).
 
 Run `python ./scripts/prepare_pngs.py` to preprocess dataset into 256*256 images.
 
